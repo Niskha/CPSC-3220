@@ -67,35 +67,49 @@
 				
 				//process data --> row|sum of row|average of row|std dev of row
 				function processData($arr = array()){
+					//final data
+					$finalData = array();
+					//counter for data arrays
 					$i = 0;
+					//counter for arrays in std dev
 					$c = 0;
 					foreach ($arr as $row){
 						$rowSum = 0;
 						$count = 0;
-						
+						$mean = 0;
+						$meanData = array();
 						foreach($row as $element){
 							$count += 1;
 							$rowSum += $element;
 							
 						}
 						$rowAvg[$i] = $rowSum / $count;
-						//std dev
+						//variance calculation
 						
 						foreach ($row as $element2){
 							
 							$meanData[$c] = pow($element2 - $rowAvg[$i],2);
-							echo $meanData[$c];
 							$c++;
 						}
-						
+						//calculate the mean of the variance values
+						foreach ($meanData as $value){
+							$mean += $value; 
+						}
+						//final std deviation value per row
+						$stdDev[$i]= sqrt($mean/$count);
 						
 						//tester code ---delete---
-						echo "Row #: ".$i." Row sum: ".$rowSum." Row Avg: ".number_format($rowAvg[$i],3). "<br/>";
+						//echo "Row #: ".$i." Row sum: ".$rowSum." Row Avg: ".number_format($rowAvg[$i],3)." Std Dev: ".number_format($stdDev[$i],3)."<br/>";
+						//Add all data points into an array
+						$finalData[$i] = (
+							array($i, $rowSum, number_format($rowAvg[$i],3), number_format($stdDev[$i],3))
+						);
 						$i++;
 					}
-					
+					return $finalData;
 				}
-				processData($array);
+				
+				echo tableForE(processData($array));
 		?>
 		<hr/>
 		<!--This is a simple back button to return to the user input page.-->
