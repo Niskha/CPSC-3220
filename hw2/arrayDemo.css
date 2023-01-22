@@ -7,3 +7,13 @@ table,th,td{
 body{
 	background-color: darkgrey;
 }
+
+td.--1{
+	width: 100px;
+	text-align: center;
+}
+
+button:hover, a:hover{
+	cursor:pointer;
+}
+
