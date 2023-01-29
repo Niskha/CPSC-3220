@@ -28,7 +28,7 @@
 				$file = fopen($filename,'r');
 				$parsedfile = fgetcsv($file);
 				fclose($file);
-				return $parsedfile;
+				retur	n $parsedfile;
 			}
 			else return $parsedfile;
 		}
@@ -48,11 +48,16 @@
 		$street_types = parseFile("street_types.txt",0,"..;");
 		
 		//Make an array fixing the domain names in domains
+		//incomplete
 		$domain = array();
-		foreach($domains as $element){
-			$domain = $element
+		$c=0;
+		for($i = 0; $i < count($domain);i++){
+			if($c%2 = 0){
+				$domain[] = $domains[].".";
+			}
+			
+			$c++;
 		}
-		
 		//Make an array uniqueIdentity() that is all of the combinations of first_names and last_names.
 		$unique_identity = array();
 		foreach($first_names as $first){
