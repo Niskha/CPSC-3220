@@ -89,48 +89,48 @@
 			$index_pairs = array();
 			$street_pairs = array();
 			$count = 0;
-			while ($count < $amount){
+			while ($count <= $amount){
 				//add first name and last name 
 				$first_index = rand(0,count($first_names)-1);
 				$last_index = rand(0,count($last_names)-1);
-				$pair = [$first_index,$last_index];
+				//$pair = [$first_index,$last_index];
 				//add the elements without checking for uniqueness if there are no elements in the array
-				if(($index_pairs == Null)){
-					$index_pairs[] = $pair;
-					$customer[0][] = $first_names[$first_index];
-					$customer[1][] = $last_names[$last_index];
-				}
+				// if(($index_pairs == Null)){
+					// $index_pairs[] = $pair;
+					// $customer[0][] = $first_names[$first_index];
+					// $customer[1][] = $last_names[$last_index];
+				// }
 				//this might not do anything, hard to check, but im not sure how its comparing the two arrays, it might just be taking the first elements. I wanted this to check the current index pair with the stored index pairs
-				foreach($index_pairs as $pairs){
-					if ($pair == $pairs){
-						break;
-					}
-					else{
-						$index_pairs[] = $pair;
+				// foreach($index_pairs as $pairs){
+					// if ($pair == $pairs){
+						// break;
+					// }
+					// else{
+						//$index_pairs[] = $pair;
 						$customer[0][] = $first_names[$first_index];
 						$customer[1][] = $last_names[$last_index];
-					}
-				}
+					// }
+				// }
 				$street_index = rand(0,count($street_names)-1);
 				$type_index = rand(0,count($street_types)-1);
-				$street_pair = [$street_index,$type_index];
+				//$street_pair = [$street_index,$type_index];
 				//add the elements without checking for uniqueness if there are no elements in the array
-				if(($street_pairs == Null)){
-					$street_pairs[] = $street_pair;
-					$customer[2][] = rand(0,9999)." ".$street_names[$street_index];
-					$customer[3][] = $street_types[$type_index];
-				}
+				// if(($street_pairs == Null)){
+					// $street_pairs[] = $street_pair;
+					// $customer[2][] = rand(0,9999)." ".$street_names[$street_index];
+					// $customer[3][] = $street_types[$type_index];
+				// }
 				//this might not do anything, hard to check, but im not sure how its comparing the two arrays, it might just be taking the first elements. I wanted this to check the current index pair with the stored index pairs. 
-				foreach($street_pairs as $pairs){
-					if ($street_pair == $pairs){
-						break;
-					}
-					else{
-						$street_pairs[] = $pair;
+				// foreach($street_pairs as $pairs){
+					// if ($street_pair == $pairs){
+						// break;
+					// }
+					//else{
+						//$street_pairs[] = $pair;
 						$customer[2][] = rand(0,9999)." ".$street_names[$street_index];
 						$customer[3][] = $street_types[$type_index];
-					}
-				}
+					//}
+				//}
 				
 				$domain_index = rand(0,count($domain)-1);
 				$customer[4][] = $first_names[$first_index].trim($last_names[$last_index]).$domain[$domain_index];
@@ -141,27 +141,28 @@
 		}
 		$customer = array();
 		try{
-			$customer = generateCustomers($first_names,$last_names,$street_names,$street_types,$domain,2);
+			$customer = generateCustomers($first_names,$last_names,$street_names,$street_types,$domain,25);
 		} catch(Exception $e){
 			echo "Exception: ".$e->getMessage();
 		}
-		echo var_dump($customer);
-		
 		
 		/*Table Generation | generate randomized data for 25 people, people must be unique 
 		and address must be unique*/
 		// Print a heading above each array | use the pre tag and utilize print_r() for element generation
 		
 		//heading table
-		 echo "<table class = 'header_table'><tr><th>First Name</th><th>Last Name</th><th>Address</th><th>Email</th></tr></table><hr/>";
-		
-			
+		//echo "<table class = 'header-table'><tr><th>First Name</th><th>Last Name</th><th>Address</th><th>Email</th></tr></table><hr/>";
+		echo "<table class = 'data-table'><tr><th>First Name</th><th>Last Name</th><th>Address</th><th>Email</th></tr>";
+		for($i = 0; $i < count($customer[0])-1;$i++){
+			echo "<tr><td>".$customer[0][$i]."</td><td>".$customer[1][$i]."</td><td>".$customer[2][$i]." ".$customer[3][$i]."</td><td>".$customer[4][$i]."</td></tr>";
+		}
+		echo "</table>";
 		
 		/*Export Data to customers.txt | 
 		Format: first_name:last_name:street_name + street_type:email(domains + '.com') | deliminator is ':'
 		*/
 		$customers_txt = fopen("customers.txt","w");
-		for($i = 0; $i < count($customer[0]);$i++){
+		for($i = 0; $i < count($customer[0])-1;$i++){
 			$txt = $customer[0][$i].":".$customer[1][$i].":".$customer[2][$i]." ".$customer[3][$i].":".$customer[4][$i];
 			fwrite($customers_txt,$txt);
 			fwrite($customers_txt,"\n");
