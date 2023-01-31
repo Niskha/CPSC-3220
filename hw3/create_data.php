@@ -41,6 +41,11 @@
 
 		//last_names.txt | newline is the delimiter
 		$last_names = parseFile("last_names.txt",0,"\n");
+		//get rid of that pesky \n
+		foreach($last_names as $name){
+			$last_names[] = trim($name);
+		}
+		
 		
 		//street_names.txt | ":" and newline is the delimiter
 		$street_names = parseFile("street_names.txt",0,":","\r\n");
@@ -56,21 +61,23 @@
 		}
 		
 		//Make an array uniqueIdentity() that is all of the combinations of first_names and last_names.
-		$unique_identity = array();
-		foreach($first_names as $first){
-			foreach($last_names as $last){
-				$last = trim($last);
-				$unique_identity[] = $first." ".$last;	
-			}
-		}
+		//this is no longer used 
+		// $unique_identity = array();
+		// foreach($first_names as $first){
+			// foreach($last_names as $last){
+				// $last = trim($last);
+				// $unique_identity[] = $first." ".$last;	
+			// }
+		// }
 
 		//Make an array uniqueAddress() that is all of the combinations of street_name and street_type.
-		$unique_address = array();
-		foreach($street_names as $name){
-			foreach($street_types as $type){
-				$unique_address[] = $name." ".$type;
-			}
-		}
+		//this is no longer used
+		// $unique_address = array();
+		// foreach($street_names as $name){
+			// foreach($street_types as $type){
+				// $unique_address[] = $name." ".$type;
+			// }
+		// }
 		
 		/*Generate Random Array of People*/
 		function generateCustomers(array $first_names, array $last_names, array $street_names, array $street_types, array $domain, int $amount){
@@ -93,6 +100,7 @@
 					$customer[0][] = $first_names[$first_index];
 					$customer[1][] = $last_names[$last_index];
 				}
+				//this might not do anything, hard to check, but im not sure how its comparing the two arrays, it might just be taking the first elements. I wanted this to check the current index pair with the stored index pairs
 				foreach($index_pairs as $pairs){
 					if ($pair == $pairs){
 						break;
@@ -109,16 +117,17 @@
 				//add the elements without checking for uniqueness if there are no elements in the array
 				if(($street_pairs == Null)){
 					$street_pairs[] = $street_pair;
-					$customer[2][] = $street_names[$street_index];
+					$customer[2][] = rand(0,9999)." ".$street_names[$street_index];
 					$customer[3][] = $street_types[$type_index];
 				}
+				//this might not do anything, hard to check, but im not sure how its comparing the two arrays, it might just be taking the first elements. I wanted this to check the current index pair with the stored index pairs. 
 				foreach($street_pairs as $pairs){
 					if ($street_pair == $pairs){
 						break;
 					}
 					else{
 						$street_pairs[] = $pair;
-						$customer[2][] = $street_names[$street_index];
+						$customer[2][] = rand(0,9999)." ".$street_names[$street_index];
 						$customer[3][] = $street_types[$type_index];
 					}
 				}
@@ -151,6 +160,13 @@
 		/*Export Data to customers.txt | 
 		Format: first_name:last_name:street_name + street_type:email(domains + '.com') | deliminator is ':'
 		*/
+		$customers_txt = fopen("customers.txt","w");
+		for($i = 0; $i < count($customer[0]);$i++){
+			$txt = $customer[0][$i].":".$customer[1][$i].":".$customer[2][$i]." ".$customer[3][$i].":".$customer[4][$i];
+			fwrite($customers_txt,$txt);
+			fwrite($customers_txt,"\n");
+		}
+		fclose($customers_txt);
     ?>
   </body>
 </html>
