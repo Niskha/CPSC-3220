@@ -52,7 +52,7 @@
 		
 		$domain = array();
 		for($i = 0; $i < (count($domains)-1);$i+=2){
-			$domain[] = $domains[$i].".".$domains[$i+1];
+			$domain[] = "@".$domains[$i].".".$domains[$i+1];
 		}
 		
 		//Make an array uniqueIdentity() that is all of the combinations of first_names and last_names.
@@ -73,51 +73,70 @@
 		}
 		
 		/*Generate Random Array of People*/
-		function generateCustomers(array $unique_identity, array $unique_address, array $domain, int $amount){
-			//this should make sure that there is never more requested customer generation than possible to generate.
-			if(count($unique_identity) < $amount){
-				throw new Exception('Out of bounds.');
+		function generateCustomers(array $first_names, array $last_names, array $street_names, array $street_types, array $domain, int $amount){
+			//this should make sure that there is never more requested unique customer generation than possible to generate.
+			if(count($first_names) * count($last_names) < $amount){
+				throw new Exception('Out of bounds. You requested more than can be generated.');
 			}
-			$max_identity = count($unique_identity)-1;
-			$max_address = count($unique_address)-1;
 			$customer = array();
-			$i = 0;
-			while($i!=$amount){
-				//random selection
-				//add identity to customer array
-				$random_identity_index = rand(0,$max_identity--);
-				$customer[] = [$unique_identity[$random_identity_index]];
+			$index_pairs = array();
+			$street_pairs = array();
+			$count = 0;
+			while ($count < $amount){
+				//add first name and last name 
+				$first_index = rand(0,count($first_names)-1);
+				$last_index = rand(0,count($last_names)-1);
+				$pair = [$first_index,$last_index];
+				//add the elements without checking for uniqueness if there are no elements in the array
+				if(($index_pairs == Null)){
+					$index_pairs[] = $pair;
+					$customer[0][] = $first_names[$first_index];
+					$customer[1][] = $last_names[$last_index];
+				}
+				foreach($index_pairs as $pairs){
+					if ($pair == $pairs){
+						break;
+					}
+					else{
+						$index_pairs[] = $pair;
+						$customer[0][] = $first_names[$first_index];
+						$customer[1][] = $last_names[$last_index];
+					}
+				}
+				$street_index = rand(0,count($street_names)-1);
+				$type_index = rand(0,count($street_types)-1);
+				$street_pair = [$street_index,$type_index];
+				//add the elements without checking for uniqueness if there are no elements in the array
+				if(($street_pairs == Null)){
+					$street_pairs[] = $street_pair;
+					$customer[2][] = $street_names[$street_index];
+					$customer[3][] = $street_types[$type_index];
+				}
+				foreach($street_pairs as $pairs){
+					if ($street_pair == $pairs){
+						break;
+					}
+					else{
+						$street_pairs[] = $pair;
+						$customer[2][] = $street_names[$street_index];
+						$customer[3][] = $street_types[$type_index];
+					}
+				}
 				
-				//add address to customer array
-				$random_address_index = rand(0,$max_address--);
-				$customer[] = [$unique_address[$random_address_index]];
-				
-				//add email address by concatinating identity and domain
 				$domain_index = rand(0,count($domain)-1);
-				$email = str_replace(" ",".",$unique_identity[$random_identity_index]);
-				$customer[] = [$email."@".$domain[$domain_index]];
-				//remove identity index 
-				unset($unique_identity[$random_identity_index]);
-				$unique_identity = array_values($unique_identity);
-				//remove address index
-				unset($unique_address[$random_address_index]);
-				$unique_address = array_values($unique_address);
-				$i++;
+				$customer[4][] = $first_names[$first_index].trim($last_names[$last_index]).$domain[$domain_index];
+				
+				$count = count($customer[0]);
 			}
 			return $customer;
 		}
-		
+		$customer = array();
 		try{
-			$customer = generateCustomers($unique_identity,$unique_address,$domain,25);
-			foreach($customer as $data){
-				foreach($data as $info){
-					echo $info." ";
-				}
-			}
+			$customer = generateCustomers($first_names,$last_names,$street_names,$street_types,$domain,2);
 		} catch(Exception $e){
 			echo "Exception: ".$e->getMessage();
 		}
-		
+		echo var_dump($customer);
 		
 		
 		/*Table Generation | generate randomized data for 25 people, people must be unique 
@@ -125,8 +144,10 @@
 		// Print a heading above each array | use the pre tag and utilize print_r() for element generation
 		
 		//heading table
-		echo "<table class = 'header_table'><tr><th>First Name</th><th>Last Name</th><th>Address</th><th>Email</th></th></table>";
-    
+		 echo "<table class = 'header_table'><tr><th>First Name</th><th>Last Name</th><th>Address</th><th>Email</th></tr></table><hr/>";
+		
+			
+		
 		/*Export Data to customers.txt | 
 		Format: first_name:last_name:street_name + street_type:email(domains + '.com') | deliminator is ':'
 		*/
